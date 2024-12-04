@@ -1,3 +1,4 @@
+//go:build freebsd
 // +build freebsd
 
 package ps
@@ -123,6 +124,10 @@ func (p *UnixProcess) PPid() int {
 
 func (p *UnixProcess) Executable() string {
 	return p.binary
+}
+
+func (p *UnixProcess) Stopped() bool {
+	return false // not implemented
 }
 
 // Refresh reloads all the data associated with this process.

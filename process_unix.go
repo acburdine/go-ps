@@ -1,3 +1,4 @@
+//go:build linux || solaris
 // +build linux solaris
 
 package ps
@@ -31,6 +32,10 @@ func (p *UnixProcess) PPid() int {
 
 func (p *UnixProcess) Executable() string {
 	return p.binary
+}
+
+func (p *UnixProcess) Stopped() bool {
+	return p.state == 'T' // only works on linux
 }
 
 func findProcess(pid int) (Process, error) {

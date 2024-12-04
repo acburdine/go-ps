@@ -1,3 +1,4 @@
+//go:build windows
 // +build windows
 
 package ps
@@ -55,6 +56,10 @@ func (p *WindowsProcess) PPid() int {
 
 func (p *WindowsProcess) Executable() string {
 	return p.exe
+}
+
+func (p *WindowsProcess) Stopped() bool {
+	return false // not implemented
 }
 
 func newWindowsProcess(e *PROCESSENTRY32) *WindowsProcess {

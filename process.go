@@ -19,6 +19,9 @@ type Process interface {
 	// Executable name running this process. This is not a path to the
 	// executable.
 	Executable() string
+
+	// Is the process currently stopped/suspended?
+	Stopped() bool
 }
 
 // Processes returns all processes.

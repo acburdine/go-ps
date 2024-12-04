@@ -1,3 +1,4 @@
+//go:build darwin
 // +build darwin
 
 package ps
@@ -10,9 +11,10 @@ import (
 )
 
 type DarwinProcess struct {
-	pid    int
-	ppid   int
-	binary string
+	pid     int
+	ppid    int
+	binary  string
+	stopped bool
 }
 
 func (p *DarwinProcess) Pid() int {
@@ -25,6 +27,10 @@ func (p *DarwinProcess) PPid() int {
 
 func (p *DarwinProcess) Executable() string {
 	return p.binary
+}
+
+func (p *DarwinProcess) Stopped() bool {
+	return p.stopped
 }
 
 func findProcess(pid int) (Process, error) {
@@ -64,9 +70,10 @@ func processes() ([]Process, error) {
 	darwinProcs := make([]Process, len(procs))
 	for i, p := range procs {
 		darwinProcs[i] = &DarwinProcess{
-			pid:    int(p.Pid),
-			ppid:   int(p.PPid),
-			binary: darwinCstring(p.Comm),
+			pid:     int(p.Pid),
+			ppid:    int(p.PPid),
+			binary:  darwinCstring(p.Comm),
+			stopped: p.Stat == '4', // SSTOP on Darwin
 		}
 	}
 
@@ -128,7 +135,8 @@ const (
 )
 
 type kinfoProc struct {
-	_    [40]byte
+	_    [36]byte
+	Stat rune
 	Pid  int32
 	_    [199]byte
 	Comm [16]byte
